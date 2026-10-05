@@ -147,6 +147,13 @@ button:hover {
   box-shadow: 0 6px 15px rgba(0, 113, 197, 0.3);
 }
 
+button:disabled {
+  background-color: #64748b;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 #checkInBtn {
   flex-shrink: 0;
   white-space: nowrap;
