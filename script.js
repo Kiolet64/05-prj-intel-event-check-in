@@ -17,6 +17,9 @@ form.addEventListener("submit", function (event) {
     checkInButton.disabled = true;
     checkInButton.textContent = "Check-in closed";
     greeting.textContent = "Attendance is full. Check-in is closed.";
+    greeting.classList.remove("success-message");
+    greeting.classList.remove("celebration-message");
+    greeting.style.display = "block";
     return;
   }
 
@@ -47,12 +50,41 @@ form.addEventListener("submit", function (event) {
   if (count >= maxCount) {
     checkInButton.disabled = true;
     checkInButton.textContent = "Check-in closed";
-    greeting.textContent = "Attendance is full. Check-in is closed.";
   }
 
   //Show welcome message
-  const message = `Welcome, ${name} from ${teamName}`;
-  console.log(message);
+  const message = `Welcome, ${name} from ${teamName}!`;
+
+  if (count >= maxCount) {
+    const teams = [
+      { name: "Team Water Wise", count: waterCount },
+      { name: "Team Net Zero", count: zeroCount },
+      { name: "Team Renewables", count: powerCount },
+    ];
+    let highestTeamCount = -1;
+    let winningTeams = [];
+
+    for (let index = 0; index < teams.length; index++) {
+      if (teams[index].count > highestTeamCount) {
+        highestTeamCount = teams[index].count;
+        winningTeams = [teams[index].name];
+      } else if (teams[index].count === highestTeamCount) {
+        winningTeams.push(teams[index].name);
+      }
+    }
+
+    greeting.textContent = `Attendance goal is reached! Congratulations to the winning team, ${winningTeams.join(
+      " and "
+    )}`;
+    greeting.classList.remove("success-message");
+    greeting.classList.add("celebration-message");
+  } else {
+    greeting.textContent = message;
+    greeting.classList.remove("celebration-message");
+    greeting.classList.add("success-message");
+  }
+
+  greeting.style.display = "block";
 
   form.reset();
 });
