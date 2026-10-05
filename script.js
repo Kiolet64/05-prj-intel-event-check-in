@@ -6,6 +6,7 @@ const attendeeCountDisplay = document.getElementById("attendeeCount");
 const checkInButton = document.getElementById("checkInBtn");
 const greeting = document.getElementById("greeting");
 const progressBar = document.getElementById("progressBar");
+const attendeeList = document.getElementById("attendeeList");
 const teamCounters = {
   water: document.getElementById("waterCount"),
   zero: document.getElementById("zeroCount"),
@@ -24,7 +25,7 @@ function loadAttendance() {
   const savedAttendance = localStorage.getItem(attendanceStorageKey);
 
   if (savedAttendance === null) {
-    return { water: 0, zero: 0, power: 0, total: 0 };
+    return { water: 0, zero: 0, power: 0, total: 0, attendees: [] };
   }
 
   const attendance = JSON.parse(savedAttendance);
@@ -54,7 +55,34 @@ function loadAttendance() {
     throw new Error("Saved attendance data is invalid.");
   }
 
-  return attendance;
+  const attendees =
+    attendance.attendees === undefined ? [] : attendance.attendees;
+
+  if (!Array.isArray(attendees) || attendees.length > attendance.total) {
+    throw new Error("Saved attendee list is invalid.");
+  }
+
+  for (let index = 0; index < attendees.length; index++) {
+    const attendee = attendees[index];
+
+    if (
+      attendee === null ||
+      typeof attendee !== "object" ||
+      typeof attendee.name !== "string" ||
+      attendee.name.trim() === "" ||
+      !teamNames[attendee.team]
+    ) {
+      throw new Error("Saved attendee list is invalid.");
+    }
+  }
+
+  return {
+    water: attendance.water,
+    zero: attendance.zero,
+    power: attendance.power,
+    total: attendance.total,
+    attendees: attendees,
+  };
 }
 
 function renderAttendance() {
@@ -65,6 +93,29 @@ function renderAttendance() {
   progressBar.style.width = `${Math.round(
     (attendance.total / maxCount) * 100
   )}%`;
+  attendeeList.replaceChildren();
+
+  if (attendance.attendees.length === 0) {
+    const emptyMessage = document.createElement("li");
+    emptyMessage.className = "attendee-empty";
+    emptyMessage.textContent = "No attendees checked in yet.";
+    attendeeList.appendChild(emptyMessage);
+  } else {
+    for (let index = 0; index < attendance.attendees.length; index++) {
+      const attendee = attendance.attendees[index];
+      const attendeeItem = document.createElement("li");
+      const attendeeName = document.createElement("span");
+      const attendeeTeam = document.createElement("span");
+
+      attendeeName.className = "attendee-name";
+      attendeeName.textContent = attendee.name;
+      attendeeTeam.className = "attendee-team";
+      attendeeTeam.textContent = teamNames[attendee.team];
+      attendeeItem.appendChild(attendeeName);
+      attendeeItem.appendChild(attendeeTeam);
+      attendeeList.appendChild(attendeeItem);
+    }
+  }
 
   if (attendance.total >= maxCount) {
     checkInButton.disabled = true;
@@ -130,6 +181,7 @@ form.addEventListener("submit", function (event) {
     zero: attendance.zero,
     power: attendance.power,
     total: attendance.total,
+    attendees: attendance.attendees.concat({ name: name, team: team }),
   };
   updatedAttendance[team] += 1;
   updatedAttendance.total += 1;

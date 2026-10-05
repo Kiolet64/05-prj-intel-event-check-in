@@ -361,6 +361,55 @@ select {
   color: #475569;
 }
 
+.attendee-list-section {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.attendee-list-section h4 {
+  margin-bottom: 12px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.attendee-list {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.attendee-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  background-color: #f8fafc;
+}
+
+.attendee-name {
+  overflow-wrap: anywhere;
+  color: #334155;
+  font-weight: 600;
+}
+
+.attendee-team {
+  flex-shrink: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.attendee-list .attendee-empty {
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .hero {
